@@ -48,6 +48,8 @@ def attempt(guard, tool: str, args: dict, shown: str) -> None:
 
 
 def main() -> None:
+    # Box-drawing glyphs and ANSI colours must survive a cp1252 Windows console.
+    sys.stdout.reconfigure(encoding="utf-8")
     home = Path(sys.argv[1])
     os.environ["HERMES_HOME"] = str(home / ".hermes")
     os.environ["HOME"] = str(home)
