@@ -1,0 +1,13 @@
+{
+  "_comment": "Copy to ~/.hermes/jarvis-episode-pins.json. A pin restricts recall candidates to one project when the request matches at least require_terms of the match terms.",
+  "pins": [
+    {
+      "note": "Example: anything about the billing service lives in this repo",
+      "match": ["billing", "invoice", "stripe"],
+      "require_terms": 2,
+      "action_root": "/home/you/projects/billing-service",
+      "support_roots": ["/home/you/projects/shared-libs"],
+      "key_paths": ["/home/you/projects/billing-service/README.md"]
+    }
+  ]
+}
