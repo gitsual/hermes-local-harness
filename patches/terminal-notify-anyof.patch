@@ -1,0 +1,25 @@
+diff --git a/tools/terminal_tool.py b/tools/terminal_tool.py
+index c5e8419822..7e41427b12 100644
+--- a/tools/terminal_tool.py
++++ b/tools/terminal_tool.py
+@@ -1218,10 +1218,16 @@ TERMINAL_SCHEMA = {
+             },
+             "notify": {
+                 "description": "With background=true: notify=true fires exactly one notification when the process exits (the right choice for nearly every bounded task — builds, tests, deploys). notify=['pattern', ...] instead notifies when a line matches a pattern — ONLY for one-shot readiness signals on processes that never exit (e.g. ['Application startup complete']); rate-limited and auto-disabled if it over-fires. Omit for silent daemons.",
+-                "anyOf": [
+-                    {"type": "boolean"},
+-                    {"type": "array", "items": {"type": "string"}}
+-                ]
++                # NOTE: local patch. Upstream declared this as an anyOf union
++                # (boolean | string[]), which is valid JSON Schema but crashes
++                # Ollama's gpt-oss chat template: it does `index $prop.Type 0`
++                # and assumes "type" is always present.
++                # A `type: ["boolean","array"]` union does NOT work either --
++                # schema_sanitizer.py:231 rewrites every type union back into
++                # anyOf. A single scalar type is the only form that survives
++                # the sanitizer AND renders in the template. Pattern-matching
++                # is still reachable through the legacy `watch_patterns` arg.
++                "type": "boolean"
+             }
+             # Legacy aliases (unadvertised, still accepted): notify_on_complete
+             # (bool) and watch_patterns (list). notify=true|[...] maps onto
