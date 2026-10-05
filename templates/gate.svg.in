@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" font-family="Noto Serif, serif">
+  <!-- Flat fills only, butt caps and mitred joins. Colours come from assets/theme.conf. -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="@COLOR_FG_DIM@"/>
+    </marker>
+    <marker id="arrow-hot" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="@COLOR_URGENT@"/>
+    </marker>
+    <marker id="arrow-go" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="@COLOR_ACCENT@"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="520" fill="@COLOR_BG@"/>
+  <rect x="0" y="0" width="1200" height="6" fill="@COLOR_ACCENT@"/>
+
+  <text x="40" y="58" fill="@COLOR_FG@" font-size="30">The anti-invention gate</text>
+  <text x="40" y="86" fill="@COLOR_FG_DIM@" font-size="15" font-family="JetBrains Mono, monospace">enforced on every tool call by plugins/jarvis-scope-guard</text>
+
+  <g stroke-linecap="butt" stroke-linejoin="miter" font-family="JetBrains Mono, monospace">
+    <!-- 1. the request -->
+    <rect x="40" y="150" width="220" height="110" rx="2" fill="@COLOR_SURFACE@" stroke="@COLOR_BORDER_INACTIVE@" stroke-width="2"/>
+    <text x="60" y="184" fill="@COLOR_FG_DIM@" font-size="13">USER</text>
+    <text x="60" y="214" fill="@COLOR_FG@" font-size="16">"continúa con</text>
+    <text x="60" y="238" fill="@COLOR_FG@" font-size="16"> lo de ayer"</text>
+
+    <path d="M260,205 L328,205" stroke="@COLOR_FG_DIM@" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+    <!-- 2. recall required -->
+    <rect x="340" y="150" width="240" height="110" rx="2" fill="@COLOR_SURFACE_ALT@" stroke="@COLOR_MUTED@" stroke-width="2"/>
+    <text x="360" y="184" fill="@COLOR_MUTED@" font-size="13">PHASE</text>
+    <text x="360" y="216" fill="@COLOR_FG@" font-size="19">RECALL_REQUIRED</text>
+    <text x="360" y="242" fill="@COLOR_FG_DIM@" font-size="13">only the recall helper</text>
+
+    <path d="M580,205 L648,205" stroke="@COLOR_ACCENT@" stroke-width="3" fill="none" marker-end="url(#arrow-go)"/>
+    <text x="588" y="190" fill="@COLOR_ACCENT@" font-size="12">FOUND=1</text>
+
+    <!-- 3. scope locked: the single accent burst -->
+    <rect x="660" y="150" width="260" height="110" rx="2" fill="@COLOR_SURFACE_ALT@" stroke="@COLOR_ACCENT@" stroke-width="3"/>
+    <rect x="660" y="150" width="8" height="110" fill="@COLOR_ACCENT@"/>
+    <text x="684" y="184" fill="@COLOR_ACCENT@" font-size="13">PHASE</text>
+    <text x="684" y="216" fill="@COLOR_FG@" font-size="19">SCOPE_LOCKED</text>
+    <text x="684" y="242" fill="@COLOR_FG_DIM@" font-size="13">inside ACTION_ROOT only</text>
+
+    <path d="M920,205 L988,205" stroke="@COLOR_FG_DIM@" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+    <!-- 4. release -->
+    <rect x="1000" y="150" width="160" height="110" rx="2" fill="@COLOR_SURFACE@" stroke="@COLOR_BORDER_INACTIVE@" stroke-width="2"/>
+    <text x="1020" y="184" fill="@COLOR_FG_DIM@" font-size="13">NEXT MESSAGE</text>
+    <text x="1020" y="216" fill="@COLOR_FG@" font-size="19">released</text>
+
+    <!-- FOUND=0 goes back to the user -->
+    <path d="M460,150 L460,118 L150,118 L150,142" stroke="@COLOR_FG_DIM@" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+    <text x="196" y="110" fill="@COLOR_FG_DIM@" font-size="12">FOUND=0 · ask which project, never guess</text>
+
+    <!-- blocked branches -->
+    <path d="M460,260 L460,328" stroke="@COLOR_URGENT@" stroke-width="2" fill="none" marker-end="url(#arrow-hot)"/>
+    <rect x="340" y="340" width="240" height="140" rx="2" fill="@COLOR_SURFACE@" stroke="@COLOR_URGENT@" stroke-width="2"/>
+    <text x="360" y="372" fill="@COLOR_URGENT@" font-size="15">BLOCKED</text>
+    <text x="360" y="400" fill="@COLOR_FG_DIM@" font-size="13">ls, find, read_file</text>
+    <text x="360" y="422" fill="@COLOR_FG_DIM@" font-size="13">session_search</text>
+    <text x="360" y="444" fill="@COLOR_FG_DIM@" font-size="13">other skills</text>
+    <text x="360" y="466" fill="@COLOR_FG_DIM@" font-size="13">"I'll just look around"</text>
+
+    <path d="M790,260 L790,328" stroke="@COLOR_URGENT@" stroke-width="2" fill="none" marker-end="url(#arrow-hot)"/>
+    <rect x="660" y="340" width="260" height="140" rx="2" fill="@COLOR_SURFACE@" stroke="@COLOR_URGENT@" stroke-width="2"/>
+    <text x="680" y="372" fill="@COLOR_URGENT@" font-size="15">BLOCKED</text>
+    <text x="680" y="400" fill="@COLOR_FG_DIM@" font-size="13">paths outside the root</text>
+    <text x="680" y="422" fill="@COLOR_FG_DIM@" font-size="13">`..` escapes, no workdir</text>
+    <text x="680" y="444" fill="@COLOR_FG_DIM@" font-size="13">delegation, a second recall</text>
+    <text x="680" y="466" fill="@COLOR_FG_DIM@" font-size="13">switching project</text>
+
+    <text x="40" y="372" fill="@COLOR_FG@" font-size="14">The model is told why</text>
+    <text x="40" y="396" fill="@COLOR_FG_DIM@" font-size="13">and retries in scope.</text>
+    <text x="40" y="436" fill="@COLOR_FG@" font-size="14">Prompts ask.</text>
+    <text x="40" y="460" fill="@COLOR_ACCENT@" font-size="14">The plugin refuses.</text>
+  </g>
+</svg>
