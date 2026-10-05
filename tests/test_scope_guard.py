@@ -140,6 +140,14 @@ def test_terminal_blocks_parent_directory_escapes(guard, tmp_path):
     assert verdict["action"] == "block"
 
 
+def test_terminal_blocks_windows_parent_directory_escapes(guard, tmp_path):
+    lock_scope(guard, tmp_path)
+    verdict = guard.pre_tool_call(
+        tool_name="terminal", args={"command": r"type ..\secrets", "workdir": str(tmp_path)}, session_id="s1"
+    )
+    assert verdict["action"] == "block"
+
+
 def test_terminal_blocks_out_of_scope_home_paths(guard, tmp_path):
     root = Path.home() / ".hermes-scope-guard-test-root"
     lock_scope(guard, root)

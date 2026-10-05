@@ -75,8 +75,10 @@ CONTINUATION_RE = re.compile(
 
 FIELD_RE = re.compile(r"(?m)^([A-Z][A-Z0-9_]+)=(.*)$")
 
+# Accept both separators: on Windows the home is C:\\Users\\name and a
+# forward-slash-only pattern never matched, so out-of-scope paths slipped by.
 HOME_PATH_RE = re.compile(
-    re.escape(HOME) + r"/[^\s'\";|&><)\]}]+"
+    re.escape(HOME) + r"[/\\][^\s'\";|&><)\]}]+"
 )
 
 RECALL_SKILL_NAMES = {
@@ -424,8 +426,8 @@ def _check_terminal(
             session_id,
         )
 
-    if "../" in command or re.search(
-        r"(^|[;&|]\s*)cd\s+\.\.(?:/|\s|$)",
+    if re.search(r"\.\.[/\\]", command) or re.search(
+        r"(^|[;&|]\s*)cd\s+\.\.(?:[/\\]|\s|$)",
         command,
     ):
         return _block(
