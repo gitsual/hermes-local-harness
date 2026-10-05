@@ -73,8 +73,8 @@ Continuation phrases are detected in Spanish and English
 - **qwen3-coder at 64k does not fit fully in 16 GB.** Expect part of it on CPU
   (`ollama ps`). `gpt-oss:20b` fits at 64k with the q8_0 KV cache at 100% GPU.
 - **Patches are tied to Hermes 0.21.0.** Re-check them after every update.
-- **Linux only.** The installer and systemd drop-in assume Linux; the plugin
-  itself is plain Python.
+- **Installer and Ollama drop-in are Linux only** (bash + systemd). The plugin
+  is plain Python and its test suite passes on Linux and Windows 11.
 
 ## Tests
 
