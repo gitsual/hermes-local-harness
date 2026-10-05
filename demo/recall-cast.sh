@@ -18,6 +18,6 @@ ask() {
   echo; sleep 2.2
 }
 
-ask "continúa con el webhook de stripe"
-ask "retoma trailapp"
-ask "continúa con lo de ayer"
+ask "continue with the stripe webhook"
+ask "resume trailapp"
+ask "pick up where we left off yesterday"

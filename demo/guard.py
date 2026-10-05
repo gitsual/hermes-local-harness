@@ -57,7 +57,7 @@ def main() -> None:
     os.environ["HOME"] = str(home)
     guard = load_plugin()
     billing = home / "work/billing-api"
-    request = "continúa con el webhook de stripe"
+    request = "continue with the stripe webhook"
 
     show(f"{CYAN}{BOLD}user  ›{RESET}", request, 1.2)
     guard.pre_llm_call(session_id="demo", user_message=request)

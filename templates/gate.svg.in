@@ -22,8 +22,8 @@
     <!-- 1. the request -->
     <rect x="40" y="150" width="220" height="110" rx="2" fill="@COLOR_SURFACE@" stroke="@COLOR_BORDER_INACTIVE@" stroke-width="2"/>
     <text x="60" y="184" fill="@COLOR_FG_DIM@" font-size="13">USER</text>
-    <text x="60" y="214" fill="@COLOR_FG@" font-size="16">"continúa con</text>
-    <text x="60" y="238" fill="@COLOR_FG@" font-size="16"> lo de ayer"</text>
+    <text x="60" y="214" fill="@COLOR_FG@" font-size="16">"pick up where</text>
+    <text x="60" y="238" fill="@COLOR_FG@" font-size="16"> we left off"</text>
 
     <path d="M260,205 L328,205" stroke="@COLOR_FG_DIM@" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
 

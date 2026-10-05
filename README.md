@@ -74,7 +74,7 @@ comment with the reason. The measurements behind them are in [`docs/findings.md`
 
 ## 🛡️ The gate in action
 
-The user says *"continúa con el webhook de stripe"*. The model would love to `ls ~/work` and pick something. It
+The user says *"continue with the stripe webhook"*. The model would love to `ls ~/work` and pick something. It
 cannot. These are the real `pre_tool_call` verdicts the plugin returns, in order:
 
 <img src="assets/gifs/guard.gif" alt="The plugin blocks ls and session_search, allows the recall helper, locks scope to billing-api, then blocks a read in trailapp and a .. escape while allowing work inside the root">
@@ -139,8 +139,9 @@ into a two-phase state machine, enforced mechanically on every tool call:
   escapes, commands without a workdir, `session_search`, delegation, a second recall and other skills are blocked.
 - **Released** on the next user message.
 
-`FOUND=0` never unlocks anything: the model has to ask. Continuation phrases are detected in Spanish and English
-(`CONTINUATION_PATTERNS` in the plugin).
+`FOUND=0` never unlocks anything: the model has to ask. Continuation phrases are detected in English and Spanish
+(`CONTINUATION_PATTERNS` in the plugin). Bare imperatives such as "continue" or "resume" count only when they open
+the message or its last line, so a pasted log or a `resume.pdf` does not trip the gate.
 
 ---
 
