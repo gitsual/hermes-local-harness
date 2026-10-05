@@ -65,16 +65,24 @@ Continuation phrases are detected in Spanish and English
 
 ## Known limitations
 
-- **Recall can pick the wrong episode.** Ranking favours recent verified work
-  over a project name in the request. A request naming project A has been seen
-  to return project B, and the scope lock then enforces B. For topics where
-  that happens, add a pin (`examples/jarvis-episode-pins.example.json` →
+- **Recall abstains rather than guesses.** It locks a project only from a pin,
+  a path or Claude Code status line in the request, a project name, the
+  current session's work (followed across context compression), or rare and
+  name-shaped words whose past turns worked in one clear place. Anything else
+  asks the user. Against every continuation request in a real `state.db`
+  (51 labeled cases, `tools/eval-recall.py`) it makes no wrong lock, but all
+  51 were also used to tune it: there is no untouched test set left. For a
+  topic it gets wrong, add a pin (`examples/jarvis-episode-pins.example.json` →
   `~/.hermes/jarvis-episode-pins.json`).
+- **A path with spaces typed without quotes is cut at the first space** and
+  resolves to a directory that does not exist; live recall then abstains.
 - **qwen3-coder at 64k does not fit fully in 16 GB.** Expect part of it on CPU
   (`ollama ps`). `gpt-oss:20b` fits at 64k with the q8_0 KV cache at 100% GPU.
 - **Patches are tied to Hermes 0.21.0.** Re-check them after every update.
 - **Installer and Ollama drop-in are Linux only** (bash + systemd). The plugin
-  is plain Python and its test suite passes on Linux and Windows 11.
+  and the recall helper are plain Python and the whole test suite passes on
+  Linux and Windows 11. On Windows, recall reads paths from tool arguments but
+  only finds POSIX-style paths in free text.
 
 ## Tests
 
@@ -84,6 +92,13 @@ python3 -m pytest -q tests
 
 The tests drive the plugin hooks directly, exactly as Hermes calls them. No
 model or running Hermes is needed.
+
+To score recall end to end against your own history, label past requests
+(format in the docstring of `tools/eval-recall.py`) and run:
+
+```bash
+python3 tools/eval-recall.py ~/.hermes/jarvis-recall-eval.json -v
+```
 
 ## License
 
