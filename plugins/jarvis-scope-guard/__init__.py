@@ -1,4 +1,4 @@
-"""Jarvis Recall-First + Scope Guard v8.2.
+"""Jarvis Recall-First + Scope Guard v9.0.
 
 Two phases:
 
@@ -36,7 +36,7 @@ HERMES_HOME = Path(
     os.environ.get("HERMES_HOME", str(Path.home() / ".hermes"))
 ).expanduser().resolve()
 
-LOG_FILE = HERMES_HOME / "logs" / "jarvis-scope-v8.2.log"
+LOG_FILE = HERMES_HOME / "logs" / "jarvis-scope.log"
 LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
 
 HOME = str(Path.home().resolve())
@@ -187,10 +187,25 @@ def _clear(session_id: str) -> None:
             _LAST_ACTIVE_SESSION = ""
 
 
+CODE_FENCE_RE = re.compile(r"```.*?```", re.DOTALL)
+
+# Longer messages are mostly pasted material (specs, logs, code). A
+# continuation word deep inside them is content, not the user's request.
+LONG_MESSAGE = 800
+HEAD_CHARS = 300
+TAIL_LINE = 160
+
+
 def _is_continuation(user_message: str) -> bool:
     text = str(user_message or "").strip()
-    if not text:
+    if not text or text.startswith("["):
         return False
+    text = CODE_FENCE_RE.sub(" ", text)
+    if len(text) > LONG_MESSAGE:
+        # Intent is typed before the pasted block or on its own short line
+        # after it; a long last line is still pasted prose.
+        last = text.rstrip().rsplit("\n", 1)[-1]
+        text = text[:HEAD_CHARS] + ("\n" + last if len(last) <= TAIL_LINE else "")
     return CONTINUATION_RE.search(text) is not None
 
 
@@ -266,6 +281,11 @@ def _parse_handoff(result: Any) -> dict[str, Any] | None:
         "skill_loaded": True,
         "blocked_count": 0,
     }
+
+
+def _is_not_found(result: Any) -> bool:
+    text = "\n".join(_flatten_strings(result))
+    return "JARVIS_HANDOFF_V2" in text and re.search(r"(?m)^FOUND=0\s*$", text) is not None
 
 
 def _inside(path: str, root: str) -> bool:
@@ -645,6 +665,14 @@ def post_tool_call(
             return None
 
         if tool_name == "terminal" and _is_recall_helper(args or {}):
+            if _is_not_found(result):
+                # Recall abstained. Holding the gate would block every tool
+                # for the rest of the turn; the handoff already tells the
+                # model to ask the user which project to continue.
+                _clear(sid)
+                _log("HANDOFF_NONE", session_id=sid, result_preview=str(result)[:500])
+                return None
+
             locked = _parse_handoff(result)
 
             if locked is None:
@@ -686,7 +714,7 @@ def on_session_finalize(session_id: str | None = None, **kwargs: Any):
 
 
 def register(ctx):
-    _log("REGISTER", plugin="jarvis-scope-guard", version="8.2.0")
+    _log("REGISTER", plugin="jarvis-scope-guard", version="9.0.0")
 
     ctx.register_hook("pre_llm_call", pre_llm_call)
     ctx.register_hook("pre_tool_call", pre_tool_call)

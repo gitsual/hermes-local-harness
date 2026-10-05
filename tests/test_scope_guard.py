@@ -178,3 +178,34 @@ def test_sessions_are_isolated(guard, tmp_path):
 def test_plugin_writes_its_log_under_hermes_home(guard, tmp_path):
     guard.pre_llm_call(session_id="s1", user_message="hola")
     assert Path(os.environ["HERMES_HOME"], "logs").is_dir()
+
+
+def test_not_found_handoff_releases_the_gate(guard):
+    guard.pre_llm_call(session_id="s1", user_message="continúa")
+    guard.post_tool_call(
+        tool_name="terminal",
+        args={"command": RECALL_CMD},
+        result="JARVIS_HANDOFF_V2\nFOUND=0\nNEXT=ASK_USER_WHICH_PROJECT",
+        session_id="s1",
+    )
+    assert guard._state("s1") is None
+    assert guard.pre_tool_call(tool_name="clarify", args={}, session_id="s1") is None
+
+
+def test_pasted_material_with_a_late_continuation_word_is_not_a_continuation(guard):
+    spec = "# PRD — Research system\n\n" + ("Requirement text. " * 80) + "El agente continúa la tarea."
+    assert not guard._is_continuation(spec)
+
+
+def test_system_notes_are_not_continuations(guard):
+    note = "  [ASYNC DELEGATION BATCH COMPLETE — deleg_1] continúa con el resultado"
+    assert not guard._is_continuation(note)
+
+
+def test_continuation_inside_a_code_fence_is_ignored(guard):
+    assert not guard._is_continuation("mira este log:\n```\nworker: continúa\n```")
+
+
+def test_continuation_at_the_end_of_a_pasted_log_counts(guard):
+    log = ("worker 3 finished batch\n" * 60) + "\ncontinúa"
+    assert guard._is_continuation(log)

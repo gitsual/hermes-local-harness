@@ -1,5 +1,5 @@
 name: jarvis-scope-guard
-version: "8.2.0"
+version: "9.0.0"
 description: >
   Two-phase mechanical gate for Jarvis continuation tasks:
   recall must happen first, then execution is scope-locked to ACTION_ROOT.
