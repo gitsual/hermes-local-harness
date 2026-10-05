@@ -1,0 +1,11 @@
+name: jarvis-scope-guard
+version: "8.2.0"
+description: >
+  Two-phase mechanical gate for Jarvis continuation tasks:
+  recall must happen first, then execution is scope-locked to ACTION_ROOT.
+provides_hooks:
+  - pre_llm_call
+  - pre_tool_call
+  - post_tool_call
+  - on_session_reset
+  - on_session_finalize
