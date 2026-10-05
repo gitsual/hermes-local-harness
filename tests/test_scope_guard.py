@@ -67,6 +67,38 @@ def test_fresh_requests_are_not_continuations(guard, message):
     assert not guard._is_continuation(message)
 
 
+@pytest.mark.parametrize(
+    "message",
+    [
+        "continue with the stripe webhook",
+        "resume trailapp",
+        "please carry on with the migration",
+        "keep going with the parser",
+        "pick up the billing work again",
+        "redo what we did yesterday",
+        "continue",
+        "here is the log:\nerror: timeout\ncontinue with the retry fix",
+    ],
+)
+def test_english_continuations_match_spanish_coverage(guard, message):
+    assert guard._is_continuation(message)
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "update my resume.pdf with the new job",
+        "the loop should continue after an error",
+        "write a function that resumes interrupted downloads",
+        "resume.pdf is out of date",
+        "fix this build error:\nContinue? [y/N] n\nerror: aborted by user",
+        "this dialog keeps showing up:\nSpace name\ne.g. Product Development\nContinue",
+    ],
+)
+def test_english_words_inside_a_fresh_request_do_not_gate(guard, message):
+    assert not guard._is_continuation(message)
+
+
 def test_normal_turn_does_not_gate_tools(guard):
     assert guard.pre_llm_call(session_id="s1", user_message="instala ripgrep") is None
     assert guard.pre_tool_call(tool_name="terminal", args={"command": "ls"}, session_id="s1") is None

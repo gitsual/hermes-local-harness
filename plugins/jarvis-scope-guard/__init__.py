@@ -61,7 +61,13 @@ CONTINUATION_PATTERNS = [
     r"\bretomar\b",
     r"\bdonde lo dejamos\b",
     r"\btrabajo anterior\b",
-    # English
+    # English. "continue" and "resume" are common inside fresh requests (a loop
+    # that continues, a resume.pdf), so the bare verbs count only as the
+    # imperative that opens the message, or its last line when an object
+    # follows (pasted logs and UIs are full of lines and buttons "Continue").
+    r"^\s*(?:please\s+|ok,?\s+|now\s+)?(?:continue|resume|carry on|keep going|pick up)(?=\s|$)",
+    r"\n(?=[^\n]*\Z)\s*(?:please\s+|ok,?\s+|now\s+)?(?:continue|resume|carry on|keep going|pick up)\s+\S",
+    r"\bwhat we (?:did|were doing)\b",
     r"\bcontinue\b.*\b(?:previous|prior|last|where we left)\b",
     r"\bresume\b.*\b(?:previous|prior|last)\b",
     r"\bwhere we left off\b",
