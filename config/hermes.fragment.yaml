@@ -1,0 +1,77 @@
+# Merge these keys into ~/.hermes/config.yaml. Every value here was measured,
+# not guessed; docs/findings.md has the evidence behind each one.
+# Tested against Hermes Agent 0.21.0 and Ollama on a 16 GB RTX 4080 Super.
+
+model:
+  default: qwen3-coder:latest          # Qwen3-Coder 30B-A3B (18 GB on disk)
+  provider: custom:ollama-launch
+  # Hermes refuses to start below 64,000 tokens of runtime context
+  # (MINIMUM_CONTEXT_LENGTH in agent/model_metadata.py). Mirror the value the
+  # Ollama server actually delivers (OLLAMA_CONTEXT_LENGTH), not the model card.
+  ollama_num_ctx: 65536
+
+providers:
+  ollama-launch:
+    name: Ollama
+    api: http://127.0.0.1:11434/v1
+    default_model: qwen3-coder:latest
+    models:
+      - qwen3-coder:latest
+
+agent:
+  # The enforcement block ("every response must contain tool calls or a final
+  # result") is injected by substring match, and "qwen" matches every Qwen.
+  # With it, qwen3-coder emits tool calls as plain text (<function=...>) with
+  # finish_reason=stop and Hermes never runs them. A/B at temperature 0: broken
+  # every time with the block, correct every time without it.
+  # Keep "qwen" OUT of this list. Do not use `true` (that means "everyone").
+  tool_use_enforcement:
+    - gpt
+    - codex
+    - gemini
+    - gemma
+    - grok
+    - glm
+    - deepseek
+  # Thinking models behind /v1/chat/completions return an EMPTY content field:
+  # the budget is spent reasoning and the reasoning block is dropped. Disable
+  # thinking per model. List both spellings; without ":latest" it won't match.
+  reasoning_overrides:
+    some-thinking-model:latest: none
+    some-thinking-model: none
+
+auxiliary:
+  # `provider: auto` + `model: ''` means "whatever is loaded in VRAM right now".
+  # If that model has < 64k context, compression aborts mid-session. Pin it.
+  compression:
+    provider: custom:ollama-launch
+    model: qwen3-coder:latest
+    context_length: 65536
+
+web:
+  # Empty backend auto-resolves to firecrawl, which needs an API key and fails.
+  # ddgs (DuckDuckGo) works without one: `pip install ddgs` in Hermes' Python.
+  backend: ddgs
+  search_backend: ddgs
+
+# Tool schemas eat context without showing up as "system prompt". Trimming the
+# CLI toolsets took overhead from 73% to 37% of the window (`hermes prompt-size`).
+# Do it with: hermes tools disable session_search delegation code_execution tts vision browser
+# It persists here, NOT in agent.disabled_toolsets.
+platform_toolsets:
+  cli:
+    - clarify
+    - cronjob
+    - file
+    - memory
+    - skills
+    - terminal
+    - todo
+    - web
+
+plugins:
+  enabled:
+    - jarvis-scope-guard
+  entries:
+    jarvis-scope-guard:
+      allow_tool_override: true
