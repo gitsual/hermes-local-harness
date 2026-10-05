@@ -41,7 +41,9 @@ def attempt(guard, tool: str, args: dict, shown: str) -> None:
         # phase and root is the reason.
         sentences = [s.strip() for s in verdict["message"].split(". ")]
         reason = next(s for s in sentences if not s.startswith(("JARVIS", "PHASE=", "ACTION_ROOT=")))
-        reason = reason.replace(str(Path.home()), "~").replace(os.environ["HOME"], "~")
+        for home in (os.environ["HOME"], str(Path.home())):
+            # The reason may quote the path repr()-escaped (doubled backslashes on Windows).
+            reason = reason.replace(home.replace("\\", "\\\\"), "~").replace(home, "~")
         show(f"  {RED}{BOLD}BLOCKED{RESET}", f"{DIM}{reason[:90]}{RESET}", 1.3)
     else:
         show(f"  {GREEN}{BOLD}allowed{RESET}", "", 0.8)
